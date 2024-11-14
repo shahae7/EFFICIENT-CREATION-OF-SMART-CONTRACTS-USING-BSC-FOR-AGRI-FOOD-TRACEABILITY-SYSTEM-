@@ -1,0 +1,511 @@
+SOURCE CODE
+from flask_cors import CORS
+from flask import *
+app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+import mysql.connector
+def connect():
+    return mysql.connector.connect(host="localhost", user="root",  password="",  database="food",auth_plugin = 'mysql_native_password',port='3307')
+
+@app.route('/food/insertproductlot', methods=["POST"], strict_slashes=False)
+def insertproductlot():
+    r=request.json
+    mydb = connect()
+    mycursor = mydb.cursor()
+    tx = 'select productid from productlot order by productid desc limit 1'
+    mycursor.execute(tx)
+    e = mycursor.fetchall()
+    if len(e) == 0:
+            eid = 1
+    else:
+            eid = e[0][0]+1
+    d="insert into productlot(productid,productname,owners,seedid)values ('%s','%s','%s','%s')"%(eid,r['productname'],r['owners'],r['seedid'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 'e'
+    
+@app.route('/food/updateproductlot', methods=["POST"], strict_slashes=False)
+def updateproductlot():
+    r=request.json
+    mydb = connect()
+    d="update productlot set productname ='%s',owners ='%s',seedid ='%s' where productid='%s'"%(r['productname'],r['owners'],r['seedid'],r['productid'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 's'
+    
+@app.route('/food/viewproductlot', methods=["POST"], strict_slashes=False)
+def viewproductlot():
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="select *   from productlot"
+        mycursor.execute(tx)
+        e=mycursor.fetchall()
+        mydb.close()
+        return json.dumps(e)
+@app.route('/food/deleteproductlot', methods=["POST"], strict_slashes=False)
+def deleteproductlot():
+        r=request.json
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="delete from productlot where productid={0}".format(r['id'])
+        mycursor.execute(tx)
+        mydb.commit()
+        mydb.close()
+        return 's'
+@app.route('/food/insertseed', methods=["POST"], strict_slashes=False)
+def insertseed():
+    r=request.json
+    mydb = connect()
+    mycursor = mydb.cursor()
+    tx = 'select seedid from seed order by seedid desc limit 1'
+    mycursor.execute(tx)
+    e = mycursor.fetchall()
+    if len(e) == 0:
+            eid = 1
+    else:
+            eid = e[0][0]+1
+    d="insert into seed(seedid,seedname,growthtime,ownerid)values ('%s','%s','%s','%s')"%(eid,r['seedname'],r['growthtime'],r['ownerid'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 'e'
+    
+@app.route('/food/updateseed', methods=["POST"], strict_slashes=False)
+def updateseed():
+    r=request.json
+    mydb = connect()
+    d="update seed set seedname ='%s',growthtime ='%s',ownerid ='%s' where seedid='%s'"%(r['seedname'],r['growthtime'],r['ownerid'],r['seedid'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 's'
+    
+@app.route('/food/viewseed', methods=["POST"], strict_slashes=False)
+def viewseed():
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="select *   from seed"
+        mycursor.execute(tx)
+        e=mycursor.fetchall()
+        mydb.close()
+        return json.dumps(e)
+@app.route('/food/deleteseed', methods=["POST"], strict_slashes=False)
+def deleteseed():
+        r=request.json
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="delete from seed where seedid={0}".format(r['id'])
+        mycursor.execute(tx)
+        mydb.commit()
+        mydb.close()
+        return 's'
+@app.route('/food/inserttransaction', methods=["POST"], strict_slashes=False)
+def inserttransaction():
+    r=request.json
+    mydb = connect()
+    mycursor = mydb.cursor()
+    tx = 'select tid from transaction order by tid desc limit 1'
+    mycursor.execute(tx)
+    e = mycursor.fetchall()
+    if len(e) == 0:
+            eid = 1
+    else:
+            eid = e[0][0]+1
+    d="insert into transaction(tid,prod_id,fromid,toid,transactiondate,transaddress,remark)values ('%s','%s','%s','%s','%s','%s','%s')"%(eid,r['prod_id'],r['fromid'],r['toid'],r['transactiondate'],r['transaddress'],r['remark'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 'e'
+    
+@app.route('/food/updatetransaction', methods=["POST"], strict_slashes=False)
+def updatetransaction():
+    r=request.json
+    mydb = connect()
+    d="update transaction set prod_id ='%s',fromid ='%s',toid ='%s',transactiondate ='%s',transaddress='%s',remark='%s' where tid='%s'"%(r['prod_id'],r['fromid'],r['toid'],r['transactiondate'],r['transaddress'],r['remark'],r['tid'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 's'
+    
+@app.route('/food/viewtransaction', methods=["POST"], strict_slashes=False)
+def viewtransaction():
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="select *   from transaction"
+        mycursor.execute(tx)
+        e=mycursor.fetchall()
+        mydb.close()
+        return json.dumps(e)
+@app.route('/food/deletetransaction', methods=["POST"], strict_slashes=False)
+def deletetransaction():
+        r=request.json
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="delete from transaction where tid={0}".format(r['id'])
+        mycursor.execute(tx)
+        mydb.commit()
+        mydb.close()
+        return 's'
+@app.route('/food/insertusers', methods=["POST"], strict_slashes=False)
+def insertusers():
+    r=request.json
+    mydb = connect()
+    mycursor = mydb.cursor()
+    tx = 'select uid from users order by uid desc limit 1'
+    mycursor.execute(tx)
+    e = mycursor.fetchall()
+    if len(e) == 0:
+            eid = 1
+    else:
+            eid = e[0][0]+1
+    d="insert into users(uid,fname,mobile,blockchainaddress,privatekey,role)values ('%s','%s','%s','%s','%s','%s')"%(eid,r['fname'],r['mobile'],r['blockchainaddress'],r['privatekey'],r['role'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 'e'
+    
+@app.route('/food/updateusers', methods=["POST"], strict_slashes=False)
+def updateusers():
+    r=request.json
+    mydb = connect()
+    d="update users set fname ='%s',mobile ='%s',blockchainaddress ='%s',privatekey ='%s',role ='%s' where uid='%s'"%(r['fname'],r['mobile'],r['blockchainaddress'],r['privatekey'],r['role'],r['uid'])
+    mycursor = mydb.cursor()
+    mycursor.execute(d)
+    mydb.commit()
+    mydb.close()
+    return 's'
+    
+@app.route('/food/viewusers', methods=["POST"], strict_slashes=False)
+def viewusers():
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="select *   from users"
+        mycursor.execute(tx)
+        e=mycursor.fetchall()
+        mydb.close()
+        return json.dumps(e)
+@app.route('/food/deleteusers', methods=["POST"], strict_slashes=False)
+def deleteusers():
+        r=request.json
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="delete from users where uid={0}".format(r['id'])
+        mycursor.execute(tx)
+        mydb.commit()
+        mydb.close()
+        return 's'
+
+@app.route('/food/login', methods=["POST"], strict_slashes=False)
+def login():
+        r=request.json
+        mydb = connect()
+        mycursor = mydb.cursor()
+        tx="select blockchainaddress,privatekey,role from users where blockchainaddress='%s' and privatekey='%s'"%(r["name"],r["pass"])
+        mycursor.execute(tx)
+        n=mycursor.fetchone()
+        mydb.commit()
+        mydb.close()
+        return json.dumps(n)
+if __name__ == '__main__':
+    app.run(debug=True)
+from web3 import Web3
+
+def setup_bsc_testnet():
+    # Connect to BSC Testnet
+    bsc_testnet_rpc_url = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+    web3 = Web3(Web3.HTTPProvider(bsc_testnet_rpc_url))
+
+    if web3.is_connected():
+        print(f"Connected to BSC Testnet at {bsc_testnet_rpc_url}")
+    else:
+        print("Failed to connect to BSC Testnet")
+        return
+
+    # Generate a new account or use an existing one
+    account = web3.eth.account.create()
+    private_key = account.key.hex()
+    address = account.address
+
+    print(f"Generated Account:")
+    print(f"Address: {address}")
+    print(f"Private Key: {private_key}")
+
+    return address, private_key
+
+if __name__ == "__main__":
+    address, private_key = setup_bsc_testnet()
+def transaction(sender_address, receiver_address, private_key):
+    from web3 import Web3
+
+    # Binance Smart Chain RPC endpoint
+    bsc_rpc_endpoint = "https://bsc-dataseed.binance.org/"
+
+    # Initialize Web3 object with BSC endpoint
+    w3 = Web3(Web3.HTTPProvider(bsc_rpc_endpoint))
+
+    # Check if connected to the BSC network
+    if w3.is_connected():
+        print("Connected to BSC network")
+    else:
+        print("Not connected to BSC network")
+        return None
+
+    # Fetch the nonce for the sender address
+    nonce = w3.eth.get_transaction_count(sender_address)
+
+    # Build a transaction dictionary
+    transaction_dict = {
+        'nonce': nonce,
+        'to': receiver_address,
+        'value': w3.to_wei(1, 'ether'),  # Sending 1 BNB (1 BNB = 10^18 Wei)
+        'gas': 21000,  # Standard gas limit for a simple transaction
+        'gasPrice': w3.to_wei(5, 'gwei')  # Gas price in Wei (5 Gwei)
+    }
+
+    # Sign the transaction
+    signed_transaction = w3.eth.account.sign_transaction(transaction_dict, private_key)
+
+    # Send the raw transaction
+    transaction_hash = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
+
+    # Wait for the transaction receipt
+    transaction_receipt = w3.eth.waitForTransactionReceipt(transaction_hash)
+
+    # Convert the transaction hash to hex
+    transaction_receipt_hex = transaction_receipt['transactionHash'].hex()
+
+    print("Transaction Hash:", transaction_receipt_hex)
+    return transaction_receipt_hex
+v=transaction("0x71A644A1EE4DF405e93B1Be7A047cb04924b8459","0x7397aD1017054c1544083CaC010B3AD314a8c041","0xeacbf55c6bcc60612c33a9c506fff68189b60bf1c36207764fbb919f30e9974e")
+print(v)
+import mysql.connector
+from flask import *
+from web3 import Web3
+from web3.middleware import geth_poa_middleware
+from solcx import compile_standard, install_solc    
+from datetime import datetime
+
+app = Flask(__name__)
+app.secret_key = "secret key"
+
+
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+def connect():
+      return mysql.connector.connect(host="localhost", user="root",  password="",  database="supplychain",auth_plugin = 'mysql_native_password',port="3307")
+
+
+
+def s(a,b):
+    import json
+    conn = connect()
+    cursor = conn.cursor()
+    install_solc("0.6.0")
+    with open("./SimpleStorage.sol", "r") as file:
+        simple_storage_file = file.read()
+
+    compiled_sol = compile_standard(
+        {
+            "language": "Solidity",
+            "sources": {"SimpleStorage.sol": {"content": simple_storage_file}},
+            "settings": {
+                "outputSelection": {
+                    "*": {
+                        "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"]
+                    }
+                }
+            },
+        },
+        solc_version="0.6.0",
+    )
+
+    with open("compiled_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    bytecode = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["evm"][
+        "bytecode"
+    ]["object"]
+    # get abi
+    abi = json.loads(
+        compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["metadata"]
+    )["output"]["abi"]
+    from web3 import Web3
+    import json
+
+    #w3 = Web3(Web3.HTTPProvider('HTTP://127.0.0.1:7545'))
+    chain_id = 97
+    #print(w3.is_connected())
+    # BSC Testnet RPC URL
+    bsc_testnet_rpc_url = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+
+    # Connect to BSC Testnet
+    w3 = Web3(Web3.HTTPProvider(bsc_testnet_rpc_url))
+    #web3.middleware_stack.inject(geth_poa_middleware, layer=0)
+    w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+    my_address = a
+    private_key =b
+    # initialize contract
+    SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
+    nonce = w3.eth.get_transaction_count(my_address)
+    # set up transaction from constructor which executes when firstly
+    transaction = SimpleStorage.constructor().build_transaction(
+        {"chainId": chain_id, "from": my_address, "nonce": nonce}
+    )
+    signed_tx = w3.eth.account.sign_transaction(transaction, private_key=private_key)
+    tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+    tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+    insert_query = """
+INSERT INTO transaction_receipts (
+    transaction_hash, block_hash, block_number,
+    cumulative_gas_used, gas_used, timestamp,address
+) VALUES (%s, %s, %s, %s, %s, %s,%s)
+"""
+
+    cursor.execute(insert_query, (
+        tx_receipt.transactionHash.hex(),
+        tx_receipt.blockHash.hex(),
+        tx_receipt.blockNumber,
+        tx_receipt.cumulativeGasUsed,
+        tx_receipt.gasUsed,
+        datetime.now(),
+        a
+    ))
+
+    # Commit the transaction
+    conn.commit()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+    # print(tx_receipt)
+    # tx_receipt = "".join(["{:02X}".format(b) for b in tx_receipt["transactionHash"]])
+    # print(tx_receipt)
+    print("Transacation completed")
+    # Connect to MySQL
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/registration",methods=["POST"])
+def registration():
+    mydb=connect()
+    
+    email=request.form['email']
+    username=request.form['username']
+    pw=request.form['pw']
+    role=request.form['role']
+    address=request.form['address']
+    key=request.form['key']
+    submission=1;
+    insertQ="SELECT * FROM users WHERE email='%s'"%(email);
+    mycursor = mydb.cursor()
+    mycursor.execute(insertQ)
+    n=mycursor.fetchall()
+    print(n)
+    if(len(n)>=1):
+        return render_template("index.html",error="user exists")
+    else:
+        insertQ="INSERT INTO users (email ,username, password, role,address,keyvalue) VALUES ('%s', '%s', '%s', '%s','%s', '%s')"%(email ,username ,pw ,role,address,key);
+        mycursor = mydb.cursor()
+        mycursor.execute(insertQ)
+        mydb.commit()
+        session["role"]=role
+        session["username"]=username
+        return redirect('/')
+    
+@app.route("/login",methods=["POST","GET"])
+def login():
+    mydb=connect()
+    email=request.form['email']
+    pw=request.form['pw']
+    insertQ="SELECT * FROM users WHERE email='%s' AND password='%s' "%(email,pw);
+    print(insertQ)
+    mycursor = mydb.cursor()
+    mycursor.execute(insertQ)
+    n=mycursor.fetchone()
+    print(n)
+    if(n==None):
+        return render_template("index.html",error="Wrong user and password")
+    else:
+        session["role"]=n[4]
+        session["username"]=n[2]
+        if(n[4]==5):
+            return redirect("/admin")
+        elif(n[4]==2):
+            return redirect("/consumer")
+        elif(n[4]==1):
+            return redirect("/distributor")
+        elif(n[4]==0):
+            return redirect("/manufacturer")
+        elif(n[4]==3):
+            return redirect("/retailer")
+
+@app.route("/admin")
+def admin():
+    mydb=connect()
+    insertQ="SELECT * FROM users WHERE role!='5'";
+    print(insertQ)
+    mycursor = mydb.cursor()
+    mycursor.execute(insertQ)
+    n=mycursor.fetchall()
+    return render_template("admin.html",n=n)    
+
+@app.route("/viewtran")
+def viewtran():
+    mydb=connect()
+    insertQ="SELECT * FROM transaction_receipts";
+    mycursor = mydb.cursor()
+    mycursor.execute(insertQ)
+    n=mycursor.fetchall()
+    return render_template("viewtran.html",n=n) 
+@app.route("/approve")
+def approve():
+    mydb=connect()
+    a = request.args['a']
+    b = request.args['b']
+    s(a,b)
+    insertQ="update users set approve='%s' where address='%s'"%(1,a);
+    print(insertQ)
+    mycursor = mydb.cursor()
+    mycursor.execute(insertQ)
+    mydb.commit()
+    mydb.close()
+    return redirect("/admin")
+@app.route("/checkproduct")
+def checkproduct():
+    return render_template("checkproduct.html")
+
+@app.route("/addproduct")
+def addproduct():
+    return render_template("addproduct.html")
+
+@app.route("/consumer")
+def consumer():
+    return render_template("consumer.html")
+
+@app.route("/distributor")
+def distributor():
+    return render_template("distributor.html")
+
+@app.route("/manufacturer")
+def manufacturer():
+    return render_template("manufacturer.html")
+
+@app.route("/retailer")
+def retailer():
+    return render_template("retailer.html")
+if __name__ == '__main__':
+    app.run(debug=True)
